@@ -16,6 +16,7 @@ header,
 section {
   padding: 20px;
 }
+
 header {
   display: flex;
   flex-direction: column;
@@ -24,6 +25,7 @@ header {
   align-items: center;
   justify-content: center;
 }
+
 header h1,
 p {
   margin: 5px;
