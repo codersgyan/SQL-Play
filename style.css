@@ -71,3 +71,16 @@ section {
     max-width: 150px;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  section {
+    background: #ccac00;
+  }
+  body {
+    background: #181a1b;
+    color: #e8e6e3;
+  }
+  img {
+    opacity: 0.9;
+  }
+}
