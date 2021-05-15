@@ -24,11 +24,16 @@ import Config from 'react-native-config';
 
 import * as Sentry from '@sentry/react-native';
 
-// @ts-ignore
-import {AdMobInterstitial} from 'react-native-admob';
-import {ExecuteUserQuery, insertUserCommand} from '../utils/storage';
 import SplashScreen from 'react-native-splash-screen';
+import {AdSettings, InterstitialAdManager} from 'react-native-fbads';
 
+import MIcon from 'react-native-vector-icons/MaterialIcons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Snackbar from 'react-native-snackbar';
+import {getStatusBarHeight} from 'react-native-status-bar-height';
+import {BottomSheetModalProvider} from '@gorhom/bottom-sheet/';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {ExecuteUserQuery, insertUserCommand} from '../utils/storage';
 import {getLargestWidths, shouldShowAd, getIsPremium} from '../utils/utils';
 import AppBar from './AppBar';
 import Table from './Table';
@@ -38,12 +43,6 @@ import InputContainer from './InputContainer';
 import '../utils/appReviewer';
 import '../utils/updateChecker';
 import {darkBGColor, darkYellow} from '../data/colors.json';
-import MIcon from 'react-native-vector-icons/MaterialIcons';
-import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Snackbar from 'react-native-snackbar';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {BottomSheetModalProvider} from '@gorhom/bottom-sheet/';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 // import {AppTour, AppTourView} from 'react-native-app-tour';
 
 Sentry.init({
@@ -55,23 +54,31 @@ MCIcon.loadFont();
 
 MIcon.loadFont();
 
+AdSettings.setLogLevel('verbose');
+AdSettings.addTestDevice(AdSettings.currentDeviceHash);
+
 const {height, width} = Dimensions.get('window');
 
 //set app id and load ad
-AdMobInterstitial.setAdUnitID('ca-app-pub-9677914909567793/9794581114');
+const placementId: string | undefined = Platform.select({
+  ios: Config.IOS_AD_ID,
+  android: Config.ANDROID_AD_ID,
+});
 
 const loadAd = () => {
-  //show ad
-  AdMobInterstitial.isReady((isReady: boolean) => {
-    if (shouldShowAd()) {
-      //if true only show ad
-      if (isReady) {
-        AdMobInterstitial.showAd();
-      } else {
-        AdMobInterstitial.requestAd().then(() => AdMobInterstitial.showAd());
-      }
-    }
-  });
+  console.log(AdSettings.getTrackingStatus());
+  if (!placementId) return;
+  InterstitialAdManager.showAd(placementId)
+    .then(didClick => {})
+    .catch(error => {
+      console.log(error);
+    });
+  // preloadAd
+  // InterstitialAdManager.preloadAd(placementId);
+  // //show ad
+  // if (shouldShowAd()) {
+  //   InterstitialAdManager.showPreloadedAd(placementId);
+  // }
 };
 
 interface tableDataNode {
