@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.5.3</string>
+	<string>2.5.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>6</string>
+	<string>8</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>itms-apps</string>
@@ -71,20 +71,18 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false />
-  
-  
-  <key>CFBundleURLTypes</key>
-  <array>
-    <dict>
-    <key>CFBundleURLSchemes</key>
-    <array>
-      <string>fb376167109497971</string>
-    </array>
-    </dict>
-  </array>
-  <key>FacebookAppID</key>
-  <string>376167109497971</string>
-  <key>FacebookDisplayName</key>
-  <string>SQL Play</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb376167109497971</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>376167109497971</string>
+	<key>FacebookDisplayName</key>
+	<string>SQL Play</string>
 </dict>
 </plist>

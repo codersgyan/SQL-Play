@@ -54,8 +54,10 @@ MCIcon.loadFont();
 
 MIcon.loadFont();
 
-AdSettings.setLogLevel('verbose');
-AdSettings.addTestDevice(AdSettings.currentDeviceHash);
+if (__DEV__) {
+  AdSettings.setLogLevel('verbose');
+  AdSettings.addTestDevice(AdSettings.currentDeviceHash);
+}
 
 const {height, width} = Dimensions.get('window');
 
@@ -66,19 +68,19 @@ const placementId: string | undefined = Platform.select({
 });
 
 const loadAd = () => {
-  console.log(AdSettings.getTrackingStatus());
   if (!placementId) return;
-  InterstitialAdManager.showAd(placementId)
-    .then(didClick => {})
-    .catch(error => {
-      console.log(error);
-    });
   // preloadAd
-  // InterstitialAdManager.preloadAd(placementId);
-  // //show ad
-  // if (shouldShowAd()) {
-  //   InterstitialAdManager.showPreloadedAd(placementId);
-  // }
+  InterstitialAdManager.preloadAd(placementId)
+    .then(didClick => {
+      Sentry.captureMessage(`Ad Status, ${didClick}`);
+    })
+    .catch(error => {
+      Sentry.captureMessage(error);
+    });
+  //show ad
+  if (shouldShowAd()) {
+    InterstitialAdManager.showPreloadedAd(placementId);
+  }
 };
 
 interface tableDataNode {
