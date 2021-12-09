@@ -21,6 +21,11 @@ or alternatively using `brew install fastlane`
 fastlane ios deploy
 ```
 Push a new build to Appstore
+### ios upload
+```
+fastlane ios upload
+```
+Upload to app store
 
 ----
 

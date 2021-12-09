@@ -20,7 +20,7 @@ platform :ios do
   lane :deploy do
     sync_code_signing(type: "appstore")
     
-    build_app(workspace: "SQL_PlayGround.xcworkspace", scheme: "SQL_PlayGround")
+    bfasuild_app(workspace: "SQL_PlayGround.xcworkspace", scheme: "SQL_PlayGround")
     
     changelog_from_git_commits 
     

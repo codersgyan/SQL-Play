@@ -31,6 +31,7 @@ import {
   getIsPremium,
   getInterstitialId,
 } from '../utils/utils';
+
 import AppBar from './AppBar';
 import Table from './Table';
 import RunButton from './RunButton';
@@ -46,10 +47,11 @@ import {getStatusBarHeight} from 'react-native-status-bar-height';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet/';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import GoPremium from './GoPremium';
-import {
-  FullScreenAdOptions,
-  useInterstitialAd,
-} from '@react-native-admob/admob';
+import admob, {
+  MaxAdContentRating,
+  InterstitialAd,
+  AdEventType,
+} from '@invertase/react-native-google-ads';
 import {isEmulator} from 'react-native-device-info';
 // import {AppTour, AppTourView} from 'react-native-app-tour';
 
@@ -57,6 +59,8 @@ Sentry.init({
   dsn: Config.DNS,
   debug: __DEV__,
 });
+
+const interstitial = InterstitialAd.createForAdRequest(getInterstitialId());
 
 MCIcon.loadFont();
 MIcon.loadFont();
@@ -66,10 +70,6 @@ interface tableDataNode {
   rows: Array<Array<any>>;
 }
 
-const adConfig: FullScreenAdOptions = {
-  showOnLoaded: true,
-  loadOnMounted: false,
-};
 const App: React.FC = () => {
   const [tableData, setTableData] = useState<tableDataNode>({
     header: [],
@@ -83,18 +83,42 @@ const App: React.FC = () => {
   const [loaderVisibility, setLoaderVisibility] = useState<boolean>(false);
   const [isPremium, setIsPremium] = useState<boolean>(false);
   const [premiumModalOpen, setPremiumModalOpen] = useState<boolean>(false);
-  const {load, adLoaded} = useInterstitialAd(getInterstitialId(), adConfig);
   const styles = useDynamicValue(dynamicStyles);
+  const [loaded, setLoaded] = useState(false);
 
+  useEffect(() => {
+    const eventListener = interstitial.onAdEvent(type => {
+      if (type === AdEventType.LOADED) {
+        setLoaded(true);
+      }
+    });
+    // Unsubscribe from events on unmount
+    return () => {
+      eventListener();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    interstitial.show();
+  }, [loaded]);
+
+  const setupAdmob = async () => {
+    try {
+      await admob.setRequestConfiguration({
+        maxAdContentRating: MaxAdContentRating.PG,
+        tagForChildDirectedTreatment: true,
+        tagForUnderAgeOfConsent: true,
+      });
+    } catch (err) {
+      console.log('failed to setup ad', err);
+    }
+  };
   const showAd = async () => {
     if (!shouldShowAd()) return;
+    if (loaded) return;
 
-    if (adLoaded) return;
-    try {
-      load();
-    } catch (error) {
-      console.log('failed to load ad', error);
-    }
+    interstitial.load();
   };
 
   const runQuery = async () => {
@@ -144,6 +168,7 @@ const App: React.FC = () => {
       setIsPremium(isPremRes);
       // Setup ad only when user is not premium
       if (!isPremRes) {
+        setupAdmob();
       }
       await SplashScreen.hide({fade: true});
     };
