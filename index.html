@@ -46,6 +46,13 @@
               src="./images/google-play-badge.png"
           /></a>
         </div>
+
+        <a href="https://web.sqlplay.net"
+          ><img
+            width="322px"
+            src="./images/launch-web-badge.svg"
+            alt="Launch sql play web button"
+        /></a>
       </header>
       <section>
         <!-- <div class="preview"> -->
@@ -54,8 +61,12 @@
       </section>
     </main>
     <footer>
-      <p>© 2021 SQL Play</p>
+      <p>© <span id="copyright-year">2069</span> SQL Play</p>
       <a href="mailto:hi@creativeshi.com">Contact Us</a>
     </footer>
+    <script>
+      const cpr_year = document.getElementById("copyright-year");
+      cpr_year.innerHTML = new Date().getFullYear();
+    </script>
   </body>
 </html>
